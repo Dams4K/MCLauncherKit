@@ -1,0 +1,2 @@
+extends Authenticator
+class_name OfflineAuthenticator

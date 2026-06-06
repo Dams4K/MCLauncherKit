@@ -1,0 +1,25 @@
+extends RefCounted
+class_name DownloadTask
+
+signal completed(response: TaskResponse)
+
+var url: String
+var destination: String = ""
+var sha1: String
+var size: int
+
+func _complete(result: int, response_code: int, body: PackedByteArray) -> void:
+	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		Log.error("Task failed - result: %s\tresponse code: %s" % [result, response_code])
+	
+	completed.emit(TaskResponse.new(
+		result, response_code,
+		body if destination.is_empty() else PackedByteArray()
+	))
+
+
+static func body_as_text(body: PackedByteArray) -> String:
+	return body.get_string_from_utf8()
+
+static func body_as_json(body: PackedByteArray) -> Variant:
+	return JSON.parse_string(body_as_text(body))

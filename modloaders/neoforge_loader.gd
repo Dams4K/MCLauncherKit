@@ -1,0 +1,2 @@
+extends GameLoader
+class_name NeoforgeLoader
