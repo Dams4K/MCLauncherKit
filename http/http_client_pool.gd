@@ -26,7 +26,10 @@ func _try_dispatch() -> void:
 			_start(http, _queue.pop_front())
 
 func _start(http: HTTPRequest, task: DownloadTask) -> void:
+	if not task.destination.is_empty():
+		DirAccess.make_dir_recursive_absolute(task.destination.get_base_dir())
 	http.request_completed.connect(_on_download_done.bind(http, task), CONNECT_ONE_SHOT)
+	http.download_file = task.destination
 	http.request(task.url)
 
 func _on_download_done(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, http: HTTPRequest, task: DownloadTask) -> void:
