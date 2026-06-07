@@ -1,2 +1,0 @@
-extends GameLoader
-class_name VanillaLoader

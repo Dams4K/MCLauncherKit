@@ -33,9 +33,10 @@ static func fetch_versions(include_snapshots: bool) -> Array[MCVersion]:
 static func fetch_version_manifest(version: MCVersion) -> Dictionary:
 	var task := DownloadTask.new()
 	task.url = version.url
+	task.destination = MCLauncherKitSettings.get_version_json_path(version.id)
+	task.keep_body = true
 	
 	var data: Dictionary = (await HTTPClientPool.download(task).completed).json()
-	
 	return data
 
 

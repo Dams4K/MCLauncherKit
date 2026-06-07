@@ -31,7 +31,7 @@ static func download_assets(asset_index: Dictionary) -> void:
 	var total_size: int = asset_index.totalSize # sum all of assets size
 	var url: String     = asset_index.url
 	
-	#HTTPClientPool.total_to_download += total_size # Must had a variable in TaskDownload to don't readd it when we do HTTPClientPool.download
+	HTTPClientPool.total_to_download += total_size
 	
 	var task := DownloadTask.new()
 	task.url = url
@@ -55,10 +55,25 @@ static func _download_asset(asset: Dictionary) -> void:
 	var path := MCLauncherKitSettings.get_assets_folder().path_join("objects").path_join(sha1.substr(0, 2)).path_join(sha1)
 	
 	var task := DownloadTask.new()
+	task.sha1          = sha1
+	task.size          = size
+	task.url           = MojangAPI.get_asset_url(sha1)
+	task.destination   = path
+	task.already_added = true
+	
+	HTTPClientPool.download(task)
+
+
+static func download_client(client: Dictionary, version_id: String) -> void:
+	var sha1: String = client.sha1
+	var size: int    = client.size
+	var url: String  = client.url
+	
+	var task := DownloadTask.new()
 	task.sha1        = sha1
 	task.size        = size
-	task.url         = MojangAPI.get_asset_url(sha1)
-	task.destination = path
+	task.url         = url
+	task.destination = MCLauncherKitSettings.get_version_jar_path(version_id)
 	
 	HTTPClientPool.download(task)
 

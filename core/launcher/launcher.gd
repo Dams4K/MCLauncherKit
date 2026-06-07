@@ -1,13 +1,34 @@
+@abstract
 extends Node
 class_name MCLauncher
 
-@export var loader: GameLoader
-
-func install(profile: MCProfile) -> void:
+func _install(profile: MCProfile) -> void:
+	# Install minecraft only
 	var manifest: Dictionary = await MojangAPI.fetch_version_manifest(profile.version)
 	
 	AssetManager.download_libraries(manifest["libraries"])
 	AssetManager.download_assets(manifest["assetIndex"])
+	AssetManager.download_client(manifest["downloads"]["client"], profile.version.id)
+	
+	await HTTPClientPool.all_completed
+	
+	var java: String = await JavaManager.resolve(manifest["javaVersion"])
+	Log.debug(java)
+	
+	# Install the modloader
+	if profile.modloader:
+		profile.modloader.install(profile.version.id)
+
+
+func _launch(profile: MCProfile) -> void:
+	var manifest: Dictionary = await MojangAPI.fetch_version_manifest(profile.version)
+	
+	var config := LaunchConfig.new()
+	config.main_class = manifest.mainClass
+	
+	if profile.modloader:
+		await profile.modloader.patch_launch_config(config, profile)
+
 
 
 #https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml

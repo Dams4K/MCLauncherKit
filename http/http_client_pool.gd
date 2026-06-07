@@ -2,6 +2,7 @@ extends Node
 
 signal task_completed
 signal task_queued
+signal all_completed
 
 var _pool: Array[HTTPRequest] = []
 var _queue: Array[DownloadTask] = []
@@ -20,7 +21,8 @@ func _ready() -> void:
 
 func download(task: DownloadTask) -> DownloadTask:
 	_queue.append(task)
-	total_to_download += task.size
+	if not task.already_added:
+		total_to_download += task.size
 	task_queued.emit()
 	_try_dispatch()
 	return task
@@ -53,7 +55,7 @@ func _on_download_done(result: int, response_code: int, headers: PackedStringArr
 	_try_dispatch()
 
 func complete_task(result: int, response_code: int, body: PackedByteArray, task: DownloadTask) -> void:
-	Log.info("Task(%s) completed" % task.url)
+	Log.info("%s completed" % task)
 	
 	if task.keep_body:
 		var file = FileAccess.open(task.destination, FileAccess.READ)
@@ -62,3 +64,6 @@ func complete_task(result: int, response_code: int, body: PackedByteArray, task:
 	total_downloaded += task.size
 	task._complete(result, response_code, body)
 	task_completed.emit()
+	
+	if _queue.is_empty():
+		all_completed.emit()
