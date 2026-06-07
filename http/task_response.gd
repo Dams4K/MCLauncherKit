@@ -9,6 +9,9 @@ func _init(result: int, response_code: int, body: PackedByteArray) -> void:
 	self.response_code = response_code
 	self.body = body
 
+func ok() -> bool:
+	return result == HTTPRequest.RESULT_SUCCESS and response_code == 200
+
 func text() -> String:
 	return body.get_string_from_utf8()
 

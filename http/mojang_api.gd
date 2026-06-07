@@ -3,6 +3,7 @@ extends Object
 class_name MojangAPI
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json"
+const ASSET_URL = "https://resources.download.minecraft.net/%s/%s"
 
 static func fetch_versions(include_snapshots: bool) -> Array[MCVersion]:
 	var task := DownloadTask.new()
@@ -36,3 +37,7 @@ static func fetch_version_manifest(version: MCVersion) -> Dictionary:
 	var data: Dictionary = (await HTTPClientPool.download(task).completed).json()
 	
 	return data
+
+
+static func get_asset_url(sha1: String) -> String:
+	return ASSET_URL % [sha1.substr(0, 2), sha1]

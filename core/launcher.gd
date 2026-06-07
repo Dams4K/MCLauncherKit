@@ -6,8 +6,8 @@ class_name MCLauncher
 func install(profile: MCProfile) -> void:
 	var manifest: Dictionary = await MojangAPI.fetch_version_manifest(profile.version)
 	
-	var libraries: Array = manifest["libraries"]
-	AssetManager.download_libraries(libraries)
+	AssetManager.download_libraries(manifest["libraries"])
+	AssetManager.download_assets(manifest["assetIndex"])
 
 
 #https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml

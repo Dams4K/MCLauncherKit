@@ -8,14 +8,20 @@ var destination: String = ""
 var sha1: String
 var size: int
 
+var keep_body := false
+
 func _complete(result: int, response_code: int, body: PackedByteArray) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		Log.error("Task failed - result: %s\tresponse code: %s" % [result, response_code])
 	
-	completed.emit(TaskResponse.new(
+	completed.emit.call_deferred(TaskResponse.new(
 		result, response_code,
-		body if destination.is_empty() else PackedByteArray()
+		body if destination.is_empty() or keep_body else PackedByteArray()
 	))
+
+
+func verify_sha1() -> bool:
+	return Hasher.hash_file(destination, HashingContext.HASH_SHA1) == sha1
 
 
 static func body_as_text(body: PackedByteArray) -> String:
