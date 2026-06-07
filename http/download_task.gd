@@ -13,7 +13,7 @@ var already_added := false
 
 func _complete(result: int, response_code: int, body: PackedByteArray) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
-		Log.error("Task failed - result: %s\t response code: %s" % [result, response_code])
+		Log.error("%s failed - result: %s\t response code: %s" % [self, result, response_code])
 	
 	completed.emit.call_deferred(TaskResponse.new(
 		result, response_code,

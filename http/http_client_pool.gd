@@ -51,6 +51,14 @@ func _start(http: HTTPRequest, task: DownloadTask) -> void:
 	http.request(task.url)
 
 func _on_download_done(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, http: HTTPRequest, task: DownloadTask) -> void:
+	if response_code in [301, 302, 307, 308]: # Redirection
+		var location := _get_header(headers, "Location")
+		if not location.is_empty():
+			Log.info("Redirect %s to %s" % [task, location])
+			task.url = location
+			_start(http, task)
+			return
+	
 	complete_task(result, response_code, body, task)
 	_try_dispatch()
 
@@ -67,3 +75,9 @@ func complete_task(result: int, response_code: int, body: PackedByteArray, task:
 	
 	if _queue.is_empty():
 		all_completed.emit()
+
+func _get_header(headers: PackedStringArray, key: String) -> String:
+	for header in headers:
+		if header.to_lower().begins_with(key.to_lower() + ":"):
+			return header.substr(key.length() + 1).strip_edges()
+	return ""
