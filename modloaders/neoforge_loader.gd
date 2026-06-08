@@ -79,7 +79,7 @@ func _run_processors(installer_data: Dictionary, installer_path: String, mc_vers
 		var separator = ";" if OS.get_name() == "Windows" else ":"
 		
 		var output := []
-		var exit_code := OS.execute(java, ["-cp", separator.join(classpath), main_class] + args, output, true, true)
+		var exit_code := OS.execute(java, ["-cp", separator.join(classpath), main_class] + args, output, true, false)
 		
 		if exit_code == -1:
 			Log.error("Failed to execute processor %s" % processor)
