@@ -59,6 +59,15 @@ func _on_download_done(result: int, response_code: int, headers: PackedStringArr
 			_start(http, task)
 			return
 	
+	if result == HTTPRequest.RESULT_TLS_HANDSHAKE_ERROR:
+		Log.error("Handshake error for %s" % task)
+		if task.retry_allowed():
+			Log.info("Retry the download after a handshake error")
+			task.take_retry()
+			_start(http, task)
+			return
+		Log.error("No retry available, stop here")
+	
 	complete_task(result, response_code, body, task)
 	_try_dispatch()
 

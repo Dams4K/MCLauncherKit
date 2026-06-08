@@ -12,8 +12,9 @@ var keep_body := false
 var already_added := false
 
 var _is_completed := false
-
 var _last_response: TaskResponse
+
+var _allowed_retries := 5
 
 func _complete(result: int, response_code: int, body: PackedByteArray) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
@@ -53,3 +54,10 @@ func _to_string() -> String:
 	if destination.is_empty():
 		return "DownloadTask(%s)" % url
 	return     "DownloadTask(%s, %s)" % [url, destination]
+
+
+func retry_allowed() -> bool:
+	return _allowed_retries > 0
+
+func take_retry() -> void:
+	_allowed_retries -= 1

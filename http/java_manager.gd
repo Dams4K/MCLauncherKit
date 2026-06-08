@@ -9,14 +9,17 @@ static func resolve(java_version: Dictionary) -> String:
 	var major_version: int = java_version.majorVersion
 	
 	var mojang_java_path := _get_java_executable_path(component)
+	Log.info("Search for mojang java path in %s" % mojang_java_path)
 	if FileAccess.file_exists(mojang_java_path):
 		return mojang_java_path
 	
 	var adoptium_java_path := _get_java_executable_path(str(major_version))
+	Log.info("Search for adoptium java path in %s" % adoptium_java_path)
 	if FileAccess.file_exists(adoptium_java_path):
 		return adoptium_java_path
 	
 	var installed_mojang_java_path := await install_mojang_java(component)
+	Log.info("Mojang java path should be installed here: %s" % installed_mojang_java_path)
 	if FileAccess.file_exists(installed_mojang_java_path):
 		return installed_mojang_java_path
 	
