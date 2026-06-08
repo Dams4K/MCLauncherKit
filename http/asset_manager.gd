@@ -2,12 +2,14 @@
 extends Object
 class_name AssetManager
 
-static func download_libraries(libraries: Array) -> void:
+static func download_libraries(libraries: Array) -> Array[DownloadTask]:
+	var tasks: Array[DownloadTask] = []
 	for library in libraries:
-		_download_library(library)
+		tasks.append(_download_library(library))
+	return tasks
 
 
-static func _download_library(library: Dictionary) -> void:
+static func _download_library(library: Dictionary) -> DownloadTask:
 	if not should_include_library(library): return
 	
 	var path: String = library.downloads.artifact.path
@@ -22,6 +24,7 @@ static func _download_library(library: Dictionary) -> void:
 	task.destination = MCLauncherKitSettings.get_libraries_folder().path_join(path)
 	
 	HTTPClientPool.download(task)
+	return task
 
 
 static func download_assets(asset_index: Dictionary) -> void:

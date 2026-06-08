@@ -11,18 +11,30 @@ var size: int
 var keep_body := false
 var already_added := false
 
+var _is_completed := false
+
+var _last_response: TaskResponse
+
 func _complete(result: int, response_code: int, body: PackedByteArray) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		Log.error("%s failed - result: %s\t response code: %s" % [self, result, response_code])
 	
-	completed.emit.call_deferred(TaskResponse.new(
+	_is_completed = true
+	_last_response = TaskResponse.new(
 		result, response_code,
 		body if destination.is_empty() or keep_body else PackedByteArray()
-	))
+	)
+	completed.emit.call_deferred(_last_response)
 
 
 func verify_sha1() -> bool:
 	return Hasher.hash_file(destination, HashingContext.HASH_SHA1) == sha1
+
+
+func wait() -> TaskResponse:
+	if _is_completed:
+		return _last_response
+	return await completed
 
 
 static func body_as_text(body: PackedByteArray) -> String:
@@ -30,6 +42,12 @@ static func body_as_text(body: PackedByteArray) -> String:
 
 static func body_as_json(body: PackedByteArray) -> Variant:
 	return JSON.parse_string(body_as_text(body))
+
+
+static func wait_all(tasks: Array[DownloadTask]) -> void:
+	for task: DownloadTask in tasks:
+		await task.wait()
+
 
 func _to_string() -> String:
 	if destination.is_empty():

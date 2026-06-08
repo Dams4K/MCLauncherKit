@@ -74,7 +74,7 @@ func complete_task(result: int, response_code: int, body: PackedByteArray, task:
 	task_completed.emit()
 	
 	if _queue.is_empty():
-		all_completed.emit()
+		all_completed.emit.call_deferred()
 
 func _get_header(headers: PackedStringArray, key: String) -> String:
 	for header in headers:
