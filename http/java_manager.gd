@@ -19,10 +19,11 @@ static func resolve(java_version: Dictionary) -> String:
 		return adoptium_java_path
 	
 	var installed_mojang_java_path := await install_mojang_java(component)
-	Log.info("Mojang java path should be installed here: %s" % installed_mojang_java_path)
+	Log.info("Mojang java path should be installed here: %s (%s)" % [installed_mojang_java_path, FileAccess.file_exists(installed_mojang_java_path)])
 	if FileAccess.file_exists(installed_mojang_java_path):
 		return installed_mojang_java_path
 	
+	Log.info("Install adoptium's java")
 	return await install_adoptium_java(major_version) # Last hope...
 
 static func install_mojang_java(component: String) -> String:
@@ -52,7 +53,7 @@ static func install_mojang_java(component: String) -> String:
 		return ""
 	var manifest: Dictionary = manifest_response.json()
 	
-	var executables: Array[DownloadTask] = [] # Keep reference of the tasks that must be executable for the complete signal to be listened
+	var tasks: Array[DownloadTask] = []
 	for file_path: String in manifest.files:
 		var file_info: Dictionary = manifest.files[file_path]
 		if file_info.type != "file": continue
@@ -67,15 +68,15 @@ static func install_mojang_java(component: String) -> String:
 		task.destination = _get_java_folder(component).path_join(file_path)
 		
 		if executable and OS.get_name() != "Windows":
-			executables.append(task)
 			task.completed.connect(
 				func(_res):
 					OS.execute("chmod", ["+x", ProjectSettings.globalize_path(_get_java_folder(component).path_join(file_path))])
 			)
 		
+		tasks.append(task)
 		HTTPClientPool.download(task)
 	
-	await HTTPClientPool.all_completed
+	await DownloadTask.wait_all(tasks)
 	return _get_java_executable_path(component)
 
 static func install_adoptium_java(feature_version: int) -> String:

@@ -16,7 +16,7 @@ func _install(profile: MCProfile) -> void:
 	
 	# Install the modloader
 	if profile.modloader:
-		var err = profile.modloader.install(profile.version.id, java)
+		var err = await profile.modloader.install(profile.version.id, java)
 		if err != OK:
 			Log.error("Modloader installation failed")
 			return

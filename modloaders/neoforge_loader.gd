@@ -38,7 +38,7 @@ func install(mc_version_id: String, java: String) -> Error:
 	
 	if FileAccess.file_exists(version_path):
 		Log.info("Neoforge %s is already installed. Only libraries are checked" % version)
-		return FAILED
+		return OK
 	
 	var proc_err = await _run_processors(installer_data, installer_path, mc_version_id, java)
 	if proc_err == OK:
@@ -46,6 +46,8 @@ func install(mc_version_id: String, java: String) -> Error:
 		var version_file := FileAccess.open(version_path, FileAccess.WRITE)
 		version_file.store_buffer(version_bytes)
 		return OK
+	
+	Log.debug("Processors failed")
 	return FAILED
 
 func _run_processors(installer_data: Dictionary, installer_path: String, mc_version_id: String, java: String) -> Error:
