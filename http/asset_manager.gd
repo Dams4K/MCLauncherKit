@@ -2,6 +2,7 @@
 extends Object
 class_name AssetManager
 
+
 static func download_libraries(libraries: Array) -> Array[DownloadTask]:
 	var tasks: Array[DownloadTask] = []
 	for library in libraries:
@@ -42,7 +43,7 @@ static func download_assets(asset_index: Dictionary) -> Array[DownloadTask]:
 	task.url = url
 	task.size = int(size)
 	task.sha1 = sha1
-	task.destination = MCLauncherKitSettings.get_assets_folder().path_join("%s.json" % id)
+	task.destination = MCLauncherKitSettings.get_assets_folder().path_join("indexes/%s.json" % id)
 	task.keep_body = true
 	
 	var response: TaskResponse = await HTTPClientPool.download(task).completed
