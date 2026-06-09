@@ -48,9 +48,14 @@ static func download_assets(asset_index: Dictionary) -> Array[DownloadTask]:
 	var response: TaskResponse = await HTTPClientPool.download(task).completed
 	var index: Dictionary = response.json()
 	
+	var i = 0
 	for asset_id in index.objects:
 		var asset = index.objects[asset_id]
 		tasks.append(_download_asset(asset))
+		i += 1
+		if i % 100 == 0:
+			var tree := (Engine.get_main_loop() as SceneTree)
+			if tree != null: await tree.process_frame
 	
 	return tasks
 
