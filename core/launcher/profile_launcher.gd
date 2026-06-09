@@ -4,7 +4,7 @@ class_name MCProfileLauncher
 @export var profile: MCProfile
 
 func install() -> void:
-	_install(profile)
+	await _install(profile)
 
 func launch() -> void:
 	_launch(profile)

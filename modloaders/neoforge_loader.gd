@@ -71,19 +71,21 @@ func _run_processors(installer_data: Dictionary, installer_path: String, mc_vers
 		if processor.has("sides") and not "client" in processor["sides"]:
 			continue
 		
+		var executor := JavaExecutor.new(java)
+		
 		var jar = MCLauncherKitSettings.get_libraries_folder().path_join(libraries[processor.jar])
+		executor.add_jar(jar)
 		var main_class = _get_main_class(jar)
-		var classpath = [jar]
+		
 		for cp: String in processor.classpath:
-			classpath.append(MCLauncherKitSettings.get_libraries_folder().path_join(libraries[cp]))
+			executor.add_jar(MCLauncherKitSettings.get_libraries_folder().path_join(libraries[cp]))
 		
 		var args := _resolve_args(processor.args, context, installer_data.data, "client")
-		var separator = ";" if OS.get_name() == "Windows" else ":"
 		
 		var output := []
-		var exit_code := OS.execute(java, ["-cp", separator.join(classpath), main_class] + args, output, true, false)
+		var exit_code := executor.execute(main_class, args, output)
 		
-		if exit_code == -1:
+		if exit_code != 0:
 			Log.error("Failed to execute processor %s" % processor)
 			result = FAILED
 		for out in output:

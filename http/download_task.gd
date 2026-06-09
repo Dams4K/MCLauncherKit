@@ -29,7 +29,7 @@ func _complete(result: int, response_code: int, body: PackedByteArray) -> void:
 
 
 func verify_sha1() -> bool:
-	return Hasher.hash_file(destination, HashingContext.HASH_SHA1) == sha1
+	return await Hasher.async_hash_file(destination, HashingContext.HASH_SHA1) == sha1
 
 
 func wait() -> TaskResponse:

@@ -4,6 +4,20 @@ class_name Hasher
 
 const CHUNK_SIZE = 8192
 
+class HashResult extends RefCounted:
+	signal done(hash: String)
+
+static func async_hash_file(path: String, type: HashingContext.HashType) -> String:
+	var helper := HashResult.new()
+	var thread := Thread.new()
+	thread.start(func():
+		var hash = hash_file(path, type)
+		helper.done.emit.call_deferred(hash)
+	)
+	var hash = await helper.done
+	thread.wait_to_finish()
+	return hash
+
 static func hash_file(path: String, type: HashingContext.HashType) -> String:
 	if not FileAccess.file_exists(path):
 		Log.error("File %s don't exist" % path)

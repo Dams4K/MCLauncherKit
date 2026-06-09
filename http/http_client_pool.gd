@@ -35,7 +35,7 @@ func _try_dispatch() -> void:
 
 func _start(http: HTTPRequest, task: DownloadTask) -> void:
 	if not task.destination.is_empty():
-		if FileAccess.file_exists(task.destination) and task.verify_sha1():
+		if FileAccess.file_exists(task.destination) and await task.verify_sha1():
 			var body := PackedByteArray()
 			if task.keep_body:
 				var file = FileAccess.open(task.destination, FileAccess.READ)
