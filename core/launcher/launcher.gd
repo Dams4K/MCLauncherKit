@@ -6,11 +6,12 @@ func _install(profile: MCProfile) -> void:
 	# Install minecraft only
 	var manifest: Dictionary = await MojangAPI.fetch_version_manifest(profile.version)
 	
-	AssetManager.download_libraries(manifest["libraries"])
-	AssetManager.download_assets(manifest["assetIndex"])
-	AssetManager.download_client(manifest["downloads"]["client"], profile.version.id)
+	var tasks: Array[DownloadTask] = []
+	tasks.append_array(AssetManager.download_libraries(manifest["libraries"]))
+	tasks.append_array(await AssetManager.download_assets(manifest["assetIndex"]))
+	tasks.append(AssetManager.download_client(manifest["downloads"]["client"], profile.version.id))
 	
-	await HTTPClientPool.all_completed
+	await DownloadTask.wait_all(tasks)
 	
 	var java: String = await JavaManager.resolve(manifest["javaVersion"])
 	

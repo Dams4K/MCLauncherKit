@@ -47,6 +47,7 @@ static func body_as_json(body: PackedByteArray) -> Variant:
 
 static func wait_all(tasks: Array[DownloadTask]) -> void:
 	for task: DownloadTask in tasks:
+		if task == null: continue
 		await task.wait()
 
 

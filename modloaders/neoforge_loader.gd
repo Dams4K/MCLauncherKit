@@ -63,9 +63,11 @@ func _run_processors(installer_data: Dictionary, installer_path: String, mc_vers
 	
 	var libraries: Dictionary[String, String] = {}
 	for library: Dictionary in installer_data.libraries:
-		libraries[library.name] = library.downloads.artifact.path
+		var path: String = library.get("downloads", {}).get("artifact", {}).get("path", "")
+		if path.is_empty(): continue
+		libraries[library.name] = path
 	
-	for processor: Dictionary in installer_data.get("processors", {}):
+	for processor: Dictionary in installer_data.get("processors", []):
 		if processor.has("sides") and not "client" in processor["sides"]:
 			continue
 		
@@ -121,7 +123,8 @@ static func _resolve_args(args: Array, context: Dictionary, data: Dictionary, si
 			)
 		
 		if result.begins_with("/data"):
-			result = context.installer_data.path_join(result)
+			result = context.installer_data.path_join(result.trim_prefix("/"))
+			Log.debug("DATA %s" % result)
 		
 		resolved.append(result)
 	return resolved

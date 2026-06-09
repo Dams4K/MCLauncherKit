@@ -27,7 +27,9 @@ static func _download_library(library: Dictionary) -> DownloadTask:
 	return task
 
 
-static func download_assets(asset_index: Dictionary) -> void:
+static func download_assets(asset_index: Dictionary) -> Array[DownloadTask]:
+	var tasks: Array[DownloadTask] = []
+	
 	var id: String      = asset_index.id
 	var sha1: String    = asset_index.sha1
 	var size: int       = asset_index.size
@@ -48,10 +50,12 @@ static func download_assets(asset_index: Dictionary) -> void:
 	
 	for asset_id in index.objects:
 		var asset = index.objects[asset_id]
-		_download_asset(asset)
+		tasks.append(_download_asset(asset))
+	
+	return tasks
 
 
-static func _download_asset(asset: Dictionary) -> void:
+static func _download_asset(asset: Dictionary) -> DownloadTask:
 	var sha1: String = asset.hash
 	var size: int = asset.size
 	
@@ -65,9 +69,10 @@ static func _download_asset(asset: Dictionary) -> void:
 	task.already_added = true
 	
 	HTTPClientPool.download(task)
+	return task
 
 
-static func download_client(client: Dictionary, version_id: String) -> void:
+static func download_client(client: Dictionary, version_id: String) -> DownloadTask:
 	var sha1: String = client.sha1
 	var size: int    = client.size
 	var url: String  = client.url
@@ -79,6 +84,7 @@ static func download_client(client: Dictionary, version_id: String) -> void:
 	task.destination = MCLauncherKitSettings.get_version_jar_path(version_id)
 	
 	HTTPClientPool.download(task)
+	return task
 
 
 static func should_include_library(library: Dictionary) -> bool:
