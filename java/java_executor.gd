@@ -19,7 +19,7 @@ func execute(main_class: String, args: Array[String] = [], output: Array = []) -
 	full_args.append(main_class)
 	full_args.append_array(args)
 	
-	Log.info(full_args)
+	Log.debug("%s %s" % [_java_path, " ".join(full_args)])
 	return OS.execute(_java_path, full_args, output, true, false)
 
 func process(main_class: String, args: Array[String] = []) -> int:

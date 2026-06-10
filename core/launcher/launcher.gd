@@ -37,6 +37,7 @@ func _launch(profile: MCProfile) -> void:
 								else MCLauncherKitSettings.get_default_mc_dir()
 	config.version_id         = profile.version.id
 	config.jvm_args           = profile.jvm_args.duplicate()
+	config.type = manifest.type
 	#config.natives_directory  = MCLauncherKitSettings.get_default_mc_dir() \
 								#.path_join("%s/natives" % profile.version.id)
 	for arg in manifest.arguments.game:

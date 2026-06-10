@@ -12,6 +12,7 @@ var assets_directory: String
 var asset_index: String
 var version_id: String
 var auth: Authenticator
+var type: String = "release"
 
 func launch() -> void:
 	var executor := JavaExecutor.new(java_path)
@@ -29,17 +30,17 @@ func launch() -> void:
 		"clientid": auth.client_id(),
 		"auth_xuid": auth.xuid(),
 		"user_type": auth.type(),
-		"version_type": "release"
+		"version_type": type
 	}
 	var formatted_args: Array[String] = []
 	for arg: String in game_args:
 		formatted_args.append(arg.replace("$", "").format(formatter))
 	
 	var code: int
-	#if OS.has_feature("debug"):
-		#var o = []
-		#code = executor.execute(main_class, formatted_args, o)
-		#Log.debug(o)
-	#else:
-	code = executor.process(main_class, formatted_args)
+	if OS.has_feature("debug"):
+		var o = []
+		code = executor.execute(main_class, formatted_args, o)
+		Log.debug(o[0])
+	else:
+		code = executor.process(main_class, formatted_args)
 	Log.info("Launch return code: %s" % code)

@@ -188,4 +188,31 @@ func extract_folder(reader: ZIPReader, from: String, to: String):
 
 
 func patch_launch_config(config: LaunchConfig, profile: MCProfile) -> void:
-	pass
+	var version_path: String = MCLauncherKitSettings.get_version_json_path("neoforge-%s" % version)
+	var manifest := JSON.parse_string(FileAccess.open(version_path, FileAccess.READ).get_as_text())
+	var separator: String = ";" if OS.get_name() == "Windows" else ":"
+	
+	var formatter: Dictionary[String, String] = {
+		"version_name": profile.version.id,
+		"library_directory": MCLauncherKitSettings.get_libraries_folder().trim_suffix("/"),
+		"classpath_separator": separator
+	}
+	
+	var formatted_jvm: Array[String] = []
+	for arg: String in manifest.arguments.jvm:
+		formatted_jvm.append(arg.replace("$", "").format(formatter))
+	
+	var p_paths: String = formatted_jvm.get(formatted_jvm.find("-p")+1)
+	
+	for library in manifest.libraries:
+		if not AssetManager.should_include_library(library): continue
+		var path: String = MCLauncherKitSettings.get_libraries_folder().path_join(library.downloads.artifact.path)
+		if path in config.classpath: continue
+		
+		config.classpath.append(path)
+		if OS.has_feature("debug") and not FileAccess.file_exists(path):
+			Log.error("File %s don't exist" % path)
+	
+	config.main_class = manifest.mainClass
+	config.jvm_args.append_array(formatted_jvm)
+	config.game_args.append_array(manifest.arguments.game)
