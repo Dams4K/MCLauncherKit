@@ -29,5 +29,5 @@ func process(main_class: String, args: Array[String] = []) -> int:
 	full_args.append(main_class)
 	full_args.append_array(args)
 	
-	Log.info(full_args)
+	Log.debug("%s %s" % [_java_path, " ".join(full_args)])
 	return OS.create_process(_java_path, full_args, false)
