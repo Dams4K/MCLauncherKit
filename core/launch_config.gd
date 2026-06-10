@@ -20,7 +20,7 @@ func launch() -> void:
 	
 	var formatter: Dictionary[String, String] = {
 		"version_name": version_id,
-		"game_directory": working_directory,
+		"game_directory": ProjectSettings.globalize_path(working_directory),
 		"assets_root": assets_directory,
 		"assets_index_name": asset_index,
 		"auth_player_name": auth.username(),
