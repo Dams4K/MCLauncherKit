@@ -1,5 +1,20 @@
 extends Authenticator
 class_name MicrosoftAuthenticator
 
-func get_args() -> Dictionary[String, String]:
-	return {}
+func username() -> String:
+	return ""
+
+func uuid() -> String:
+	return ""
+
+func access_token() -> String:
+	return ""
+
+func client_id() -> String:
+	return ""
+
+func xuid() -> String:
+	return ""
+
+func type() -> String:
+	return "msa"

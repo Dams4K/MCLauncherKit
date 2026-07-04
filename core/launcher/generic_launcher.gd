@@ -5,4 +5,4 @@ func install(profile: MCProfile) -> void:
 	_install(profile)
 
 func launch(profile: MCProfile) -> void:
-	_launch(profile)
+	_launch(profile, OfflineAuthenticator.new("TODO"))

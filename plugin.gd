@@ -4,7 +4,7 @@ extends EditorPlugin
 const HTTP_CLIENT_POOL = "HTTPClientPool"
 
 func _enable_plugin() -> void:
-	add_autoload_singleton(HTTP_CLIENT_POOL, get_plugin_file("http/http_client_pool.gd"))
+	add_autoload_singleton(HTTP_CLIENT_POOL, get_plugin_file("http/request/http_client_pool.gd"))
 	MCLauncherKitSettings.add_settings()
 
 func _disable_plugin() -> void:

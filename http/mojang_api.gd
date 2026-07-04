@@ -31,6 +31,11 @@ static func fetch_versions(include_snapshots: bool) -> Array[MCVersion]:
 	return versions
 
 static func fetch_version_manifest(version: MCVersion) -> Dictionary:
+	if version.url.is_empty():
+		var versions := (await fetch_versions(true)).filter((func(v: MCVersion): return v.id == version.id))
+		version = versions[0]
+		
+	
 	var task := DownloadTask.new()
 	task.url = version.url
 	task.destination = MCLauncherKitSettings.get_version_json_path(version.id)
