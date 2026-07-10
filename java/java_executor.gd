@@ -12,7 +12,7 @@ func add_jar(path: String) -> JavaExecutor:
 	_classpath.append(path)
 	return self
 
-func execute(main_class: String, args: Array[String] = [], output: Array = []) -> int:
+func run(working_dir: String, main_class: String, args: Array[String] = [], output: Array = []) -> Error:
 	var separator := ";" if OS.get_name() == "Windows" else ":"
 	var full_args := jvm_args + ["-cp", separator.join(_classpath)]
 	
@@ -20,14 +20,4 @@ func execute(main_class: String, args: Array[String] = [], output: Array = []) -
 	full_args.append_array(args)
 	
 	Log.debug("%s %s" % [_java_path, " ".join(full_args)])
-	return OS.execute(_java_path, full_args, output, true, false)
-
-func process(main_class: String, args: Array[String] = []) -> int:
-	var separator := ";" if OS.get_name() == "Windows" else ":"
-	var full_args := jvm_args + ["-cp", separator.join(_classpath)]
-	
-	full_args.append(main_class)
-	full_args.append_array(args)
-	
-	Log.debug("%s %s" % [_java_path, " ".join(full_args)])
-	return OS.create_process(_java_path, full_args, false)
+	return Java.run(working_dir, _java_path, full_args)

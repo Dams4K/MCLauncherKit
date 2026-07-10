@@ -19,9 +19,11 @@ func launch() -> void:
 	executor.jvm_args = jvm_args
 	executor._classpath = classpath
 	
+	var global_game_directory := ProjectSettings.globalize_path(working_directory)
+	
 	var formatter: Dictionary[String, String] = {
 		"version_name": version_id,
-		"game_directory": ProjectSettings.globalize_path(working_directory),
+		"game_directory": global_game_directory,
 		"assets_root": assets_directory,
 		"assets_index_name": asset_index,
 		"auth_player_name": auth.username(),
@@ -37,10 +39,5 @@ func launch() -> void:
 		formatted_args.append(arg.replace("$", "").format(formatter))
 	
 	var code: int
-	if OS.has_feature("debug"):
-		var o = []
-		code = executor.execute(main_class, formatted_args, o)
-		Log.debug(o[0])
-	else:
-		code = executor.process(main_class, formatted_args)
+	code = executor.run(global_game_directory, main_class, formatted_args)
 	Log.info("Launch return code: %s" % code)

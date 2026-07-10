@@ -83,7 +83,7 @@ func _run_processors(installer_data: Dictionary, installer_path: String, mc_vers
 		var args := _resolve_args(processor.args, context, installer_data.data, "client")
 		
 		var output := []
-		var exit_code := executor.execute(main_class, args, output)
+		var exit_code := executor.run(MCLauncherKitSettings.get_default_mc_dir(), main_class, args, output)
 		
 		if exit_code != 0:
 			Log.error("Failed to execute processor %s" % processor)
