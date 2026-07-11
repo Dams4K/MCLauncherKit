@@ -5,11 +5,14 @@ const HTTP_CLIENT_POOL = "HTTPClientPool"
 
 func _enable_plugin() -> void:
 	add_autoload_singleton(HTTP_CLIENT_POOL, get_plugin_file("http/request/http_client_pool.gd"))
-	MCLauncherKitSettings.add_settings()
 
 func _disable_plugin() -> void:
 	remove_autoload_singleton(HTTP_CLIENT_POOL)
 	MCLauncherKitSettings.remove_settings()
+
+
+func _enter_tree() -> void:
+	MCLauncherKitSettings.add_settings()
 
 
 func get_plugin_dir() -> String:

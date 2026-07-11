@@ -48,7 +48,7 @@ static func install_mojang_java(component: String) -> String:
 	manifest_task.size = runtime_list[0].manifest.size
 	
 	var manifest_response: TaskResponse = await HTTPClientPool.download(manifest_task).completed
-	if not all_runtimes_response.ok():
+	if not manifest_response.ok():
 		Log.warn("Fail to download runtime manifest")
 		return ""
 	var manifest: Dictionary = manifest_response.json()
