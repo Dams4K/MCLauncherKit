@@ -39,5 +39,5 @@ func launch() -> void:
 		formatted_args.append(arg.replace("$", "").format(formatter))
 	
 	var code: int
-	code = executor.run(global_game_directory, main_class, formatted_args)
+	code = executor.spawn(global_game_directory, main_class, formatted_args)
 	Log.info("Launch return code: %s" % code)

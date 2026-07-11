@@ -82,14 +82,14 @@ func _run_processors(installer_data: Dictionary, installer_path: String, mc_vers
 		
 		var args := _resolve_args(processor.args, context, installer_data.data, "client")
 		
-		var output := []
-		var exit_code := executor.run(MCLauncherKitSettings.get_default_mc_dir(), main_class, args, output)
+		var output := executor.run(MCLauncherKitSettings.get_default_mc_dir(), main_class, args)
 		
-		if exit_code != 0:
-			Log.error("Failed to execute processor %s" % processor)
+		if not output.get("success", false):
+			Log.error("Failed to execute processor %s: '%s'" % [processor, output.get("error")])
 			result = FAILED
-		for out in output:
-			Log.info("OUT : %s" % out)
+		
+		Log.info("stdout : %s" % output.get("stdout"))
+		Log.info("stderr : %s" % output.get("stderr"))
 	
 	return result
 
@@ -189,6 +189,7 @@ func extract_folder(reader: ZIPReader, from: String, to: String):
 
 func patch_launch_config(config: LaunchConfig, profile: MCProfile) -> void:
 	var version_path: String = MCLauncherKitSettings.get_version_json_path("neoforge-%s" % version)
+	Log.debug("patch_launch_config: '%s'" % version_path)
 	var manifest := JSON.parse_string(FileAccess.open(version_path, FileAccess.READ).get_as_text())
 	var separator: String = ";" if OS.get_name() == "Windows" else ":"
 	
