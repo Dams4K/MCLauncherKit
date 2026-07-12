@@ -14,7 +14,7 @@ var version_id: String
 var auth: Authenticator
 var type: String = "release"
 
-func launch() -> void:
+func launch() -> int:
 	var executor := JavaExecutor.new(java_path)
 	executor.jvm_args = jvm_args
 	executor._classpath = classpath
@@ -41,3 +41,4 @@ func launch() -> void:
 	var code: int
 	code = executor.spawn(global_game_directory, main_class, formatted_args)
 	Log.info("Launch return code: %s" % code)
+	return code

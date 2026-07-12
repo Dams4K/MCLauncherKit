@@ -6,5 +6,5 @@ class_name MCProfileLauncher
 func install() -> void:
 	await _install(profile)
 
-func launch(auth: Authenticator) -> void:
-	_launch(profile, auth)
+func launch(auth: Authenticator) -> int:
+	return await _launch(profile, auth)

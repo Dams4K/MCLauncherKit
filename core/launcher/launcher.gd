@@ -24,7 +24,7 @@ func _install(profile: MCProfile) -> void:
 	Log.info("Ready to launch")
 
 
-func _launch(profile: MCProfile, auth: Authenticator) -> void:
+func _launch(profile: MCProfile, auth: Authenticator) -> int:
 	var manifest: Dictionary = await MojangAPI.fetch_version_manifest(profile.version)
 	
 	var config := LaunchConfig.new()
@@ -53,4 +53,4 @@ func _launch(profile: MCProfile, auth: Authenticator) -> void:
 	if profile.modloader:
 		await profile.modloader.patch_launch_config(config, profile)
 	
-	config.launch()
+	return config.launch()

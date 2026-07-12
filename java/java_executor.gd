@@ -7,6 +7,10 @@ var _classpath: Array[String] = []
 
 func _init(java: String) -> void:
 	self._java_path = java
+	if OS.get_name() == "Windows":
+		var javaw = java.replace(".exe", "w.exe")
+		if FileAccess.file_exists(javaw):
+			self._java_path = javaw
 
 func add_jar(path: String) -> JavaExecutor:
 	_classpath.append(path)
