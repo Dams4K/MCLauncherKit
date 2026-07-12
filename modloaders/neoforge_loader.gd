@@ -40,7 +40,7 @@ func install(mc_version_id: String, java: String) -> Error:
 		Log.info("Neoforge %s is already installed. Only libraries are checked" % version)
 		return OK
 	
-	var proc_err = await _run_processors(installer_data, installer_path, mc_version_id, java)
+	var proc_err = _run_processors(installer_data, installer_path, mc_version_id, java)
 	if proc_err == OK:
 		DirAccess.make_dir_recursive_absolute(version_path.get_base_dir())
 		var version_file := FileAccess.open(version_path, FileAccess.WRITE)
